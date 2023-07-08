@@ -1,0 +1,40 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/option_header">
+
+        <EditTextPreference
+            app:key="signature"
+            app:title="@string/signature_title"
+            app:useSimpleSummaryProvider="true" />
+        <Preference
+           app:key="ImagesFolder"
+           app:title="@string/image_folder_title"
+            app:summary="@string/folder_summary"
+            />
+        <ListPreference
+            app:defaultValue="Grid"
+            app:entries="@array/reply_entries"
+            app:entryValues="@array/reply_values"
+            app:key="View_option"
+            app:title="@string/reply_title"
+            app:useSimpleSummaryProvider="true"
+            />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/sync_header">
+
+        <SwitchPreferenceCompat
+            app:key="sync"
+            app:title="@string/sync_title" />
+
+        <SwitchPreferenceCompat
+            app:dependency="sync"
+            app:key="attachment"
+            app:summaryOff="@string/photo_summary_off"
+            app:summaryOn="@string/photo_summary_on"
+            app:title="@string/photo_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

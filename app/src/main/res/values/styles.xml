@@ -1,0 +1,18 @@
+<resources>
+
+    <style name="Widget.Theme.Photos.ButtonBar.Fullscreen" parent="">
+        <item name="android:background">@color/light_blue_900</item>
+        <item name="enforceTextAppearance">true</item>
+        <item name="enforceMaterialTheme">true</item>
+        <item name="itemBackground">@null</item>
+        <item name="itemHorizontalTranslationEnabled">false</item>
+        <item name="itemIconTint">@drawable/my_selector</item>
+        <item name="itemTextAppearanceInactive">?attr/textAppearanceCaption</item>
+        <item name="itemTextAppearanceActive">?attr/textAppearanceCaption</item>
+        <item name="itemTextColor">@drawable/my_selector</item>
+        <item name="itemRippleColor">@drawable/my_selector</item>
+
+    </style>
+
+
+</resources>

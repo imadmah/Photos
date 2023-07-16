@@ -5,12 +5,8 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.Target.SIZE_ORIGINAL
 import com.example.photos.R
 import kotlinx.android.synthetic.main.item_gallery_image.view.*
 
@@ -39,7 +35,7 @@ class GalleryImageAdapter(private val itemList: List<Image>) : RecyclerView.Adap
 
         fun bind() {
 
-            val image = itemList.get(adapterPosition)
+            val image = itemList[adapterPosition]
 
             // load image
             Glide.with(context!!)

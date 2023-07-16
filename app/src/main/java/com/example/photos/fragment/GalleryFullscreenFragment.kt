@@ -2,9 +2,7 @@ package com.example.photos.fragment
 
 import ZoomOutPageTransformer
 import android.content.Context
-
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.*
 import androidx.fragment.app.DialogFragment
 import androidx.viewpager.widget.PagerAdapter
@@ -13,7 +11,7 @@ import com.bumptech.glide.Glide
 import com.example.photos.R
 import com.example.photos.adapter.Image
 import com.jsibbold.zoomage.ZoomageView
-import java.lang.Math.abs
+
 
 
 class GalleryFullscreenFragment : DialogFragment() {
@@ -21,9 +19,9 @@ class GalleryFullscreenFragment : DialogFragment() {
     private var imageList = ArrayList<Image>()
     private var selectedPosition: Int = 0
 
-    lateinit var viewPager: ViewPager
+    private lateinit var viewPager: ViewPager
 
-    lateinit var galleryPagerAdapter: GalleryPagerAdapter
+    private lateinit var galleryPagerAdapter: GalleryPagerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_gallery_fullscreen, container, false)
@@ -36,63 +34,6 @@ class GalleryFullscreenFragment : DialogFragment() {
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener)
         viewPager.setPageTransformer(true, ZoomOutPageTransformer())
 
-        viewPager.addOnPageChangeListener(object: ViewPager.OnPageChangeListener{
-            private var isScrollingDown = false
-            private var isScrollingLeft = false
-            private var isScrollingRight = false
-            private var initialX = 0f
-            private var initialY = 0f
-            override fun onPageScrollStateChanged(state: Int) {
-                when (state) {
-                    ViewPager.SCROLL_STATE_IDLE -> {
-                        if (isScrollingDown) {
-                            requireActivity().onBackPressed()
-                        } else if (isScrollingLeft) {
-                            requireActivity().onBackPressedDispatcher.onBackPressed()
-                        } else if (isScrollingRight) {
-                            // The user scrolled right in the full-screen image view
-                            // Handle right scroll behavior (e.g., show next image)
-                        }
-
-                        // Reset scroll flags and initial positions
-                        isScrollingDown = false
-                        isScrollingLeft = false
-                        isScrollingRight = false
-                        initialX = 0f
-                        initialY = 0f
-                    }
-                    ViewPager.SCROLL_STATE_DRAGGING -> {
-                        // Capture the initial touch position when dragging starts
-                        initialX = viewPager.x
-                        initialY = viewPager.y
-                    }
-                } // Do nothing
-            }
-             fun onTouch(v: View, event: MotionEvent): Boolean {
-                if (event.action == MotionEvent.ACTION_MOVE) {
-                    val deltaX = event.x - initialX
-                    val deltaY = event.y - initialY
-
-                    isScrollingDown = deltaY > 0 && abs(deltaY) > abs(deltaX)
-                    isScrollingLeft = deltaX < 0 && abs(deltaX) > abs(deltaY)
-                    isScrollingRight = deltaX > 0 && abs(deltaX) > abs(deltaY)
-                }
-                return false
-            }
-
-            override fun onPageScrolled(
-                position: Int,
-                positionOffset: Float,
-                positionOffsetPixels: Int
-            ) {
-                // Do nothing
-            }
-
-            override fun onPageSelected(position: Int) {
-                // Set the current position
-                selectedPosition = position
-            }
-        } )
 
         setCurrentItem(selectedPosition)
         return view
@@ -108,7 +49,7 @@ class GalleryFullscreenFragment : DialogFragment() {
     }
 
     // viewpager page change listener
-    internal var viewPagerPageChangeListener: ViewPager.OnPageChangeListener =
+    private var viewPagerPageChangeListener: ViewPager.OnPageChangeListener =
         object : ViewPager.OnPageChangeListener {
             override fun onPageSelected(position: Int) {
             }
@@ -127,12 +68,8 @@ class GalleryFullscreenFragment : DialogFragment() {
             val view: View = layoutInflater.inflate(R.layout.image_fullscreen, container, false)
             val imageView  = view.findViewById<ZoomageView>(R.id.ivFullscreenImage) // SubsamplingScaleImageView is used to zoom in and out of the image
             val image = imageList[position]
-            // load image
 
-            val displayMetrics = DisplayMetrics()
-            val windowmanager = activity?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-            windowmanager.defaultDisplay.getMetrics(displayMetrics)
-
+            // Glide is used to load the image
             Glide.with(requireContext())
                 .load(image.imagePath)
                 .skipMemoryCache(true)

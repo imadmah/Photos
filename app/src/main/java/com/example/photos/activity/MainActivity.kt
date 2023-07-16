@@ -1,6 +1,7 @@
 package com.example.photos.activity
 
 import android.content.Context
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
 import androidx.appcompat.app.AppCompatActivity
@@ -64,20 +65,44 @@ class MainActivity : AppCompatActivity(), GalleryImageClickListener,OnFragmentIn
         }
         initializeOnce()
         imagesDirectory =getImagesDirectory()
-        getPermission()
-        setupGallery()
-        // load images
-        loadImages()
+        getPermission { granted ->
+            if (granted) {
+                setupGallery()
+                // load images
+                loadImages()
+            } else {
+                // Handle permission denied case
+            }
+        }
+
     }
 
-    private fun getPermission(){
-        if(ContextCompat.checkSelfPermission(
+    private fun getPermission(callback: (Boolean) -> Unit) {
+        if (ContextCompat.checkSelfPermission(
                 this, android.Manifest.permission.READ_EXTERNAL_STORAGE)
-            != android.content.pm.PackageManager.PERMISSION_GRANTED){
+            != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE), 100)
-            loadImages()
+        } else {
+            callback(true)
         }
     }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == 100 && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // Permission granted
+            // Continue with setup and loading
+            setupGallery()
+            // load images
+            loadImages()
+        } else {
+            // Permission denied
+            // Handle permission denied case
+        }}
 
     private fun setupGallery(){
         galleryAdapter = GalleryImageAdapter(imageList)
@@ -135,7 +160,8 @@ class MainActivity : AppCompatActivity(), GalleryImageClickListener,OnFragmentIn
             loadImages()
 
     }
-
+    // THIS FUNCTION IS CALLED ONLY ONCE WHEN THE APP IS INSTALLED
+    // FOR THE FIRST TIME AND WHEN THE USER CHANGES THE DIRECTORY IN THE SETTINGS
     private fun initializeOnce() {
         val sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         if (!sharedPreferences.contains(IMAGES_DIRECTORY_KEY)) {

@@ -16,7 +16,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
-         // IMPLEMENT THE BUTTON TO CHANGE THE FOLDER WHICH ITS IMAGES WILL BE SHOWN IN THE APP //
+        // IMPLEMENT THE BUTTON TO CHANGE THE FOLDER WHICH ITS IMAGES WILL BE SHOWN IN THE APP //
         val button = preferenceManager.findPreference<Preference>("ImagesFolder")
         button?.setOnPreferenceClickListener {
             val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)

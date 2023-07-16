@@ -9,7 +9,8 @@
         <Preference
            app:key="ImagesFolder"
            app:title="@string/image_folder_title"
-            app:summary="@string/folder_summary"
+           app:summary="@string/folder_summary"
+
             />
         <ListPreference
             app:defaultValue="Grid"

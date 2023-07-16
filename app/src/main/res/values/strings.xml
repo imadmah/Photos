@@ -9,7 +9,7 @@
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
     <string name="reply_title">You can change images View</string>
-    <string name="folder_summary">Select the view of images</string>
+    <string name="folder_summary">Select the Folder of images you wish to view </string>
     <string name="image_folder_title">Images Folder</string>
     <!-- Sync Preferences -->
     <string name="sync_title">Sync your Photos periodically</string>

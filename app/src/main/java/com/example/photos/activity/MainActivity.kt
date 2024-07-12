@@ -11,46 +11,47 @@ import com.example.photos.R
 import com.example.photos.adapter.GalleryImageAdapter
 import com.example.photos.adapter.GalleryImageClickListener
 import com.example.photos.adapter.Image
+import com.example.photos.databinding.ActivityMainBinding
 import com.example.photos.fragment.GalleryFullscreenFragment
 import com.example.photos.fragment.OnFragmentInteractionListener
 import com.example.photos.fragment.SettingsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import kotlinx.android.synthetic.main.activity_main.*
 import java.io.File
 
+class MainActivity : AppCompatActivity(), GalleryImageClickListener, OnFragmentInteractionListener {
 
-
-class MainActivity : AppCompatActivity(), GalleryImageClickListener,OnFragmentInteractionListener {
-
-
-    // gallery column count
+    // Gallery column count
     private val PREF_NAME = "YourPREF_NAME"
     private val IMAGES_DIRECTORY_KEY = "ImagesDirectoryKey"
-    private val `SPAN-COUNT` = 3
+    private val SPAN_COUNT = 3
     private val imageList = ArrayList<Image>()
     private lateinit var galleryAdapter: GalleryImageAdapter
-    private lateinit var navBar : BottomNavigationView
+    private lateinit var navBar: BottomNavigationView
 
     companion object {
-        var imagesDirectory =""
-
+        var imagesDirectory = ""
     }
-    override fun onCreate(savedInstanceState: Bundle?) {
 
+    private lateinit var binding: ActivityMainBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        navBar = findViewById(R.id.bottomNavigationView)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        navBar = binding.bottomNavigationView
+        binding.recyclerView.setScrollbarFadingEnabled(false)
         navBar.setOnItemSelectedListener { item ->
-            when(item.itemId) {
-                R.id.navigation_home  -> {
-                    recyclerView.visibility = android.view.View.VISIBLE // Show recyclerview
-                    fragmentContainer.visibility = android.view.View.GONE // hide fragment container
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    binding.recyclerView.visibility = android.view.View.VISIBLE // Show recyclerview
+                    binding.fragmentContainer.visibility = android.view.View.GONE // Hide fragment container
                     true
                 }
 
                 R.id.navigation_settings -> {
-                    recyclerView.visibility = android.view.View.GONE // hide recyclerview
-                    fragmentContainer.visibility = android.view.View.VISIBLE // hid
+                    binding.recyclerView.visibility = android.view.View.GONE // Hide recyclerview
+                    binding.fragmentContainer.visibility = android.view.View.VISIBLE // Show fragment container
                     val settingsFragment = SettingsFragment()
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragmentContainer, settingsFragment)
@@ -60,21 +61,19 @@ class MainActivity : AppCompatActivity(), GalleryImageClickListener,OnFragmentIn
                 }
 
                 else -> false
-
             }
         }
         initializeOnce()
-        imagesDirectory =getImagesDirectory()
+        imagesDirectory = getImagesDirectory()
         getPermission { granted ->
             if (granted) {
                 setupGallery()
-                // load images
+                // Load images
                 loadImages()
             } else {
                 // Handle permission denied case
             }
         }
-
     }
 
     private fun getPermission(callback: (Boolean) -> Unit) {
@@ -97,29 +96,27 @@ class MainActivity : AppCompatActivity(), GalleryImageClickListener,OnFragmentIn
             // Permission granted
             // Continue with setup and loading
             setupGallery()
-            // load images
+            // Load images
             loadImages()
         } else {
             // Permission denied
             // Handle permission denied case
-        }}
+        }
+    }
 
-    private fun setupGallery(){
+    private fun setupGallery() {
         galleryAdapter = GalleryImageAdapter(imageList)
         galleryAdapter.listener = this
-        recyclerView.layoutManager = GridLayoutManager(this, `SPAN-COUNT`)
-        recyclerView.adapter = galleryAdapter
+        binding.recyclerView.layoutManager = GridLayoutManager(this, SPAN_COUNT)
+        binding.recyclerView.adapter = galleryAdapter
     }
+
     private fun loadImages() {
-
-            val imagePaths = scanImagePaths(File(imagesDirectory))
-
-            for (path in imagePaths) {  // add images to list
-                imageList.add(Image(path,path.substringAfterLast("/")))
-                galleryAdapter.notifyItemChanged(imageList.size - 1)
-            }
-
-
+        val imagePaths = scanImagePaths(File(imagesDirectory))
+        for (path in imagePaths) { // Add images to list
+            imageList.add(Image(path, path.substringAfterLast("/")))
+            galleryAdapter.notifyItemChanged(imageList.size - 1)
+        }
     }
 
     private fun scanImagePaths(directory: File): List<String> {
@@ -141,9 +138,8 @@ class MainActivity : AppCompatActivity(), GalleryImageClickListener,OnFragmentIn
         return extension in imageExtensions
     }
 
-
     override fun onClick(position: Int) {
-        // handle click of image
+        // Handle click of image
         val bundle = Bundle()
         bundle.putSerializable("images", imageList)
         bundle.putInt("position", position)
@@ -155,13 +151,13 @@ class MainActivity : AppCompatActivity(), GalleryImageClickListener,OnFragmentIn
     }
 
     override fun ResetImages() {
-            imageList.clear()
-            galleryAdapter.notifyDataSetChanged()
-            loadImages()
-
+        imageList.clear()
+        galleryAdapter.notifyDataSetChanged()
+        loadImages()
     }
-    // THIS FUNCTION IS CALLED ONLY ONCE WHEN THE APP IS INSTALLED
-    // FOR THE FIRST TIME AND WHEN THE USER CHANGES THE DIRECTORY IN THE SETTINGS
+
+    // This function is called only once when the app is installed
+    // for the first time and when the user changes the directory in the settings
     private fun initializeOnce() {
         val sharedPreferences = getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
         if (!sharedPreferences.contains(IMAGES_DIRECTORY_KEY)) {
@@ -185,7 +181,6 @@ class MainActivity : AppCompatActivity(), GalleryImageClickListener,OnFragmentIn
 
     override fun onStop() {
         super.onStop()
-        setImagesDirectory(imagesDirectory )// TODO: IT'D BE BETTER TO CHECK IF THE DIRECTORY HAS CHANGED IF NOT DONT WRITE AGAIN
+        setImagesDirectory(imagesDirectory) // TODO: It'd be better to check if the directory has changed; if not, don't write again
     }
-
 }

@@ -23,10 +23,9 @@ class GalleryFullscreenFragment : DialogFragment() {
 
     private lateinit var galleryPagerAdapter: GalleryPagerAdapter
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) : View? {
         val view = inflater.inflate(R.layout.fragment_gallery_fullscreen, container, false)
         viewPager = view.findViewById(R.id.viewPager)
-
         galleryPagerAdapter = GalleryPagerAdapter()
         imageList = arguments?.getSerializable("images") as ArrayList<Image>
         selectedPosition = requireArguments().getInt("position")
